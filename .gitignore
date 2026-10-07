@@ -1,0 +1,7 @@
+node_modules
+*.local
+.DS_Store
+
+# File esportati/importati: contengono dati personali, non committare
+Casellario_Massivo_*.csv
+*.csv
