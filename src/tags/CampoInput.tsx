@@ -109,6 +109,23 @@ export function CampoInput(props: Props) {
          }         
       }
 
+      // Escape: se il campo e' stato modificato ripristina il valore
+      // d'ingresso (mantenendo il focus); se non e' stato modificato toglie
+      // il focus dal campo.
+      if(e.key === "Escape") {
+         e.preventDefault();
+         const el = e.currentTarget;
+         if(el.value !== initialValue) {
+            el.value = initialValue;
+            setValue(initialValue);
+            if(props.onText) props.onText(initialValue);
+         }
+         else {
+            el.blur();
+         }
+         return;
+      }
+
       // navigation keys
       if(!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"].contains(e.key)) return;
 
