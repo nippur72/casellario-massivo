@@ -10,7 +10,7 @@ export function App() {
                 <CasellarioMassivo />
             </main>
             <footer className="site-footer">
-                per voi con amore da Nino Porcino (
+                fatto per voi da Nino Porcino (
                 <a href="https://github.com/nippur72" target="_blank" rel="noopener noreferrer">nippur72</a>
                 )
             </footer>

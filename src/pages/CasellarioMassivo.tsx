@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { CampoInput, CursorNavigation } from "../tags/CampoInput";
+// Migrazione a CampoInputBase (input non gestito): si abbandona CampoInput.
+// import { CampoInput, CursorNavigation } from "../tags/CampoInput";
+import { CampoInputBase, CursorNavigation } from "../tags/CampoInputBase";
+import { ParseField } from "../tags/CampoInput_Parsers";
 import { decodificaCodiceFiscale } from "../lib/cfDecode";
 import { RigaCasellario, salvaCsv, parseCsvImport } from "../lib/csv";
 
@@ -7,6 +10,15 @@ const STORAGE_KEY = "casellario-massivo:v1";
 
 type Campo = "cognome" | "nome" | "codiceFiscale";
 const COLONNE: Campo[] = ["cognome", "nome", "codiceFiscale"];
+
+// Parser del codice fiscale (CampoInputBase): accetta il vuoto oppure 16
+// caratteri con controcodice corretto; in ogni caso normalizza in maiuscolo
+// e rimuove gli spazi. Ritorna undefined quando il testo non e' valido.
+const parseCodiceFiscale: ParseField = raw => {
+    const v = raw.trim().toUpperCase().replace(/\s+/g, "");
+    if (v === "") return v;
+    return v.length === 16 && decodificaCodiceFiscale(v).valido ? v : undefined;
+};
 
 function nuovoId(): string {
     return Math.random().toString(36).slice(2, 10);
@@ -209,6 +221,7 @@ export function CasellarioMassivo() {
                                 <tr key={riga.id}>
                                     <td className="col-num">{indice + 1}</td>
                                     <td>
+                                        {/* Vecchio CampoInput (rimuovere dopo verifica):
                                         <CampoInput
                                             type="string"
                                             id={cellId(riga.id, "cognome")}
@@ -219,8 +232,20 @@ export function CasellarioMassivo() {
                                             cursorNavigation={navigazione(righe, indice, 0)}
                                             onText={v => setCampo(riga.id, "cognome", v)}
                                         />
+                                        */}
+                                        <CampoInputBase
+                                            id={cellId(riga.id, "cognome")}
+                                            className="campo"
+                                            value={riga.cognome}
+                                            maxLength={40}
+                                            uppercase
+                                            data-focusable
+                                            cursorNavigation={navigazione(righe, indice, 0)}
+                                            onCommit={value => setCampo(riga.id, "cognome", value)}
+                                        />
                                     </td>
                                     <td>
+                                        {/* Vecchio CampoInput (rimuovere dopo verifica):
                                         <CampoInput
                                             type="string"
                                             id={cellId(riga.id, "nome")}
@@ -231,8 +256,20 @@ export function CasellarioMassivo() {
                                             cursorNavigation={navigazione(righe, indice, 1)}
                                             onText={v => setCampo(riga.id, "nome", v)}
                                         />
+                                        */}
+                                        <CampoInputBase
+                                            id={cellId(riga.id, "nome")}
+                                            className="campo"
+                                            value={riga.nome}
+                                            maxLength={40}
+                                            uppercase
+                                            data-focusable
+                                            cursorNavigation={navigazione(righe, indice, 1)}
+                                            onCommit={value => setCampo(riga.id, "nome", value)}
+                                        />
                                     </td>
                                     <td className="col-fiscale">
+                                        {/* Vecchio CampoInput (rimuovere dopo verifica):
                                         <CampoInput
                                             type="string"
                                             id={cellId(riga.id, "codiceFiscale")}
@@ -244,6 +281,20 @@ export function CasellarioMassivo() {
                                             data-focusable
                                             cursorNavigation={navigazione(righe, indice, 2)}
                                             onText={v => setCampo(riga.id, "codiceFiscale", v)}
+                                        />
+                                        */}
+                                        <CampoInputBase
+                                            id={cellId(riga.id, "codiceFiscale")}
+                                            className="campo campo-cf"
+                                            value={riga.codiceFiscale}
+                                            maxLength={16}
+                                            uppercase
+                                            parse={parseCodiceFiscale}
+                                            valid={cfValido}
+                                            invalid={cfErrato}
+                                            data-focusable
+                                            cursorNavigation={navigazione(righe, indice, 2)}
+                                            onCommit={value => setCampo(riga.id, "codiceFiscale", value)}
                                         />
                                     </td>
                                     <td className="col-sesso">{dati.sesso ?? ""}</td>
@@ -270,7 +321,7 @@ export function CasellarioMassivo() {
             <div className="sotto">
                 <button id={ID_AGGIUNGI_RIGA} className="btn" onClick={() => aggiungiRiga()}>+ Aggiungi riga</button>
                 <span className="suggerimento">
-                    Tasti cursore per spostarsi tra le celle · Invio scende alla riga successiva
+                    Tasti cursore per spostarsi tra le celle · Invio va alla cella successiva
                 </span>
             </div>
         </div>
