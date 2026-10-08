@@ -3,7 +3,7 @@ import { timeParse } from "lib/date/timeParse";
 
 import { focusElement, focusRelative, focusRelativeScheduled } from "lib/focusNextElement";
 
-import { AllHTMLAttributes, useState, useEffect, forwardRef } from "react";
+import { AllHTMLAttributes, useState, useEffect } from "react";
 
 export interface CursorNavigation {
    up?: string;
@@ -206,9 +206,6 @@ export function CampoInput(props: Props) {
          spellCheck={false}
          autoComplete={props.autoComplete ?? "off"}
          />
-   );  
+   );
 }
-
-// wraps CampoInput for "ref"
-export const CampoInputRef = forwardRef((props: Props, ref) => <CampoInput innerRef={ref} {...props} />);
 

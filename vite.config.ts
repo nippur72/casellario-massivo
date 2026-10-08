@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
         resolve: {
             // CampoInput e le sue dipendenze importano con alias "lib/..."
             alias: {
-                lib: path.resolve(__dirname, "./src/lib")
+                lib: path.resolve(import.meta.dirname, "./src/lib")
             },
             extensions: [".tsx", ".ts", ".js"]
         },
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
             emptyOutDir: true,
             cssCodeSplit: false,
             rollupOptions: {
-                input: path.resolve(__dirname, "./src/main.tsx"),
+                input: path.resolve(import.meta.dirname, "./src/main.tsx"),
                 output: {
                     entryFileNames: "app.js",
                     chunkFileNames: "[name].js",

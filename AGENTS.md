@@ -3,12 +3,16 @@
 ## Comandi
 
 - `npm run build` — genera il bundle statico in `bundle/` (Vite, **nessun dev server**).
+- `npm run watch` — rebuild ad ogni modifica di `src/` (sempre in produzione).
 - `npm run typecheck` — controllo tipi (`tsc --noEmit`). Eseguirlo sempre dopo le modifiche.
 - `npm run serve` — serve la root su `http://127.0.0.1:8080` (`http-server`).
 
 Dopo ogni modifica a `src/` **eseguire `npm run build`** e committare anche
 `bundle/`: il deploy è GitHub Pages "Deploy from a branch" (`main`, root) e
 pubblica i file del branch, non c'è build in CI.
+
+**Mai committare i CSV**: `.gitignore` esclude `*.csv` perché contengono dati
+personali (anche i file di test tipo `Casellario_Massivo_*.csv` in root).
 
 ## Architettura
 
@@ -41,4 +45,6 @@ Unica deroga già presente: in `CampoInput.tsx` la gestione del tasto **ESC**
 - Codice e commenti in italiano, stile compatto.
 - Uppercase dei campi gestito in `setCampo`; il CF è valido solo a 16 caratteri
   col controcodice corretto, errato se lungo >0 e !=16.
-- Formato CSV di export: 9 campi `;`, senza header, fine-riga CRLF, senza BOM.
+- Formato CSV di export: 9 campi `;`, senza header, fine-riga CRLF, senza BOM,
+  newline finale. L'import (`parseCsvImport`) accetta il formato nativo a 9
+  campi o uno semplice a 3 colonne, con o senza header, separatore rilevato.
